@@ -1,0 +1,26 @@
+{
+  "projectName": "ciberapp",
+  "rootPath": "/home/jojan/AppsWebs/ciberapp",
+  "stack": {
+    "primary": "Astro v7.0.3 (running Node adapter v11.0.0)",
+    "language": "TypeScript (strict configuration)",
+    "uiFramework": "Vue v7.0.0 (Astro Vue integration)",
+    "pythonEnv": "Python venv (.venv/bin/docling for document layout parsing)"
+  },
+  "architecture": {
+    "appDir": "app",
+    "srcDir": "app/src",
+    "contentDir": "content",
+    "metaDir": "meta",
+    "scriptsDir": "scripts",
+    "pdfSourceDir": "raw-pdfs"
+  },
+  "conventions": {
+    "contentManagement": "Astro Content Collections (Astro glob loader loading markdown from ../content)",
+    "pipelines": {
+      "pdfIngest": "scripts/batch-docling.sh (converts PDFs to markdown using docling inside .venv)",
+      "preview": "scripts/preview-lecciones.mjs (dry-run parsing of markdown chapters)",
+      "synthesizer": "scripts/synthesizer.mjs (creates module/lesson structure and frontmatter)"
+    }
+  }
+}

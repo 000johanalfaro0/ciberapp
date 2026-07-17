@@ -1,0 +1,13 @@
+{
+  "testRunner": null,
+  "testLayers": [],
+  "coverage": null,
+  "linter": null,
+  "typeChecker": {
+    "tool": "typescript",
+    "config": "app/tsconfig.json",
+    "command": "npm --prefix app run build"
+  },
+  "formatter": null,
+  "strictTdd": false
+}

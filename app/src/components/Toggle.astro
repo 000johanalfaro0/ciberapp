@@ -1,0 +1,29 @@
+---
+interface Props {
+  pregunta: string;
+}
+
+const { pregunta } = Astro.props;
+---
+
+<div class="lab">
+  <div class="lab-k">Práctica</div>
+  <p class="lab-q">{pregunta}</p>
+  <div class="switch-row">
+    <div class="toggle" role="switch" aria-checked="false"><div class="knob"></div></div>
+    <div class="readout">0<small>estado</small></div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.toggle').forEach((tg) => {
+    const ro = tg.closest('.switch-row')?.querySelector('.readout');
+    tg.addEventListener('click', () => {
+      const on = !tg.classList.contains('on');
+      tg.classList.toggle('on', on);
+      tg.setAttribute('aria-checked', on ? 'true' : 'false');
+      if (ro) ro.innerHTML = (on ? 1 : 0) + '<small>estado</small>';
+      navigator.vibrate?.(12);
+    });
+  });
+</script>

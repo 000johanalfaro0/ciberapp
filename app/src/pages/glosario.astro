@@ -1,0 +1,87 @@
+---
+import Base from '../layouts/Base.astro';
+import grafo from '../data/grafo.json';
+
+// Construir glosario autovinculado: cada término introducido en algún módulo
+// se convierte en entrada, con backlinks a los módulos que lo usan.
+
+interface Entrada {
+  termino: string;
+  definicion: string;          // se completa con synthesizer
+  introducido_en: string;      // modulo id
+  usado_en: string[];          // otros módulos que dependen de él
+}
+
+// por ahora solo el vocabulario, sin definiciones (las llena el synthesizer con DeepSeek)
+const vocabulario: Entrada[] = [];
+const introducePor: Record<string, string> = {};
+const usa: Record<string, string[]> = {};
+
+for (const [modId, mod] of Object.entries(grafo.modules as any)) {
+  for (const t of mod.introduces || []) {
+    introducePor[t] = modId;
+  }
+  for (const dep of mod.depends_on || []) {
+    (usa[dep] ||= []).push(modId);
+  }
+}
+
+for (const [termino, modId] of Object.entries(introducePor)) {
+  vocabulario.push({
+    termino,
+    definicion: '',  // TBD synthesizer
+    introducido_en: modId,
+    usado_en: usa[modId] || [],
+  });
+}
+
+vocabulario.sort((a,b) => a.termino.localeCompare(b.termino));
+
+// agrupar por inicial
+const porLetra: Record<string, Entrada[]> = {};
+for (const v of vocabulario) {
+  const letra = (v.termino[0] || '_').toUpperCase();
+  (porLetra[letra] ||= []).push(v);
+}
+---
+
+<Base title="Glosario · raíz_" tag="glosario" view="glosario">
+  <section class="view lread enter">
+    <a class="backlink" href="/">← home</a>
+    <div class="crumb">GLOSARIO ENCICLOPÉDICO</div>
+    <h2>Términos del grafo</h2>
+    <p style="color:var(--muted);">
+      Cada término es un nodo. Saber dónde se introdujo y dónde se usa es lo que vuelve
+      esto una <b>enciclopedia hiperconectada</b>, no un índice alfabético.
+    </p>
+
+    <p style="font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--faint);margin-top:20px;">
+      {Object.keys(porLetra).sort().map(l=>(
+        <a href={`#${l}`} style="color:var(--accent);text-decoration:none;margin-right:6px;">{l}</a>
+      ))}
+    </p>
+
+    {Object.entries(porLetra).sort(([a],[b])=>a.localeCompare(b)).map(([letra, entradas])=>(
+      <section id={letra} style="margin-top:34px;">
+        <h3 style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px;">{letra}</h3>
+        {entradas.map(e=>(
+          <div id={e.termino} style="padding:12px 0;border-bottom:1px solid var(--line);">
+            <div style="font-family:ui-monospace,Menlo,monospace;font-weight:600;font-size:15px;color:var(--ink);">
+              {e.termino}
+            </div>
+            {e.definicion
+              ? <p style="margin:6px 0 0;font-size:15px;color:#27272a;">{e.definicion}</p>
+              : <p style="margin:6px 0 0;font-size:13px;color:var(--faint);font-style:italic;">definición pendiente de síntesis</p>
+            }
+            <div style="font-size:12px;color:var(--faint);font-family:ui-monospace,Menlo,monospace;margin-top:6px;">
+              ↳ introducido en <a href={`/m/${e.introducido_en}`} style="color:var(--accent);">{e.introducido_en}</a>
+              {e.usado_en.length > 0 && (
+                <> · usado en {e.usado_en.map(u=>(<a href={`/m/${u}`} style="color:var(--accent);">{u}</a>)).join(', ')}</>
+              )}
+            </div>
+          </div>
+        ))}
+      </section>
+    ))}
+  </section>
+</Base>

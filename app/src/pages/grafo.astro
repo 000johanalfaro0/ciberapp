@@ -1,0 +1,80 @@
+---
+import Base from '../layouts/Base.astro';
+import grafo from '../data/grafo.json';
+import { getCollection } from 'astro:content';
+
+const todasLecciones = await getCollection('lecciones');
+const modulosConContenido = new Set(todasLecciones.map(l => l.data.modulo));
+
+// helper: clases CSS por status (activo si hay contenido, de lo contrario bloqueado)
+function estadoModulo(modId: string): 'done' | 'active' | 'weak' | 'locked' {
+  if (modId === 'M0') return 'active';
+  if (modulosConContenido.has(modId)) return 'active';
+  return 'locked';
+}
+
+const fasesConMods = grafo.phases.map(f => ({
+  ...f,
+  mods: f.modules.map(id => ({
+    id,
+    ...(grafo.modules as any)[id],
+    estado: estadoModulo(id),
+  })),
+}));
+---
+
+<Base title="Skill tree · raíz_" tag="skill tree" view="grafo">
+  <section class="view tree enter">
+    <h2 style="font-size:24px;font-weight:680;margin:6px 0 22px;letter-spacing:-.02em;">
+      El grafo del conocimiento
+    </h2>
+    <p style="color:var(--muted);font-size:15px;margin:0 0 28px;">
+      Cada módulo depende de los anteriores. El sistema no te deja avanzar si te faltan
+      prerrequisitos — eso elimina el "no entendí nada" de los cursos comunes.
+    </p>
+
+    {fasesConMods.map(fase => (
+      <div class="phase">
+        <div class="phase-title">{fase.id} · {fase.name}</div>
+        <div class="modules">
+          {fase.mods.map((m: any) => (
+            <a
+              href={m.estado === 'locked' ? '#' : `/m/${m.id}`}
+              class={`mod ${m.estado}`}
+              data-mod={m.id}
+            >
+              <div class="mod-id">{m.id}</div>
+              <div class="mod-title">{m.title}</div>
+              <div class="mod-bar"><span style={{
+                width: m.estado === 'done' ? '100%' :
+                       m.estado === 'active' ? '0%' :
+                       m.estado === 'weak' ? '40%' : '0%'
+              }}></span></div>
+            </a>
+          ))}
+        </div>
+      </div>
+    ))}
+
+    <hr class="rule" />
+    <div style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--faint);">
+      cobertura de material: {grafo.stats.cobertura_material}
+    </div>
+  </section>
+</Base>
+
+<script>
+  // bloquear clics en módulos locked
+  document.querySelectorAll('a.mod.locked').forEach(a=>{
+    a.addEventListener('click',e=>{
+      e.preventDefault();
+      const id = a.getAttribute('data-mod');
+      navigator.vibrate?.([10,40,10]);
+      // pequeño shake
+      a.animate(
+        [{transform:'translateX(0)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],
+        {duration:200}
+      );
+    });
+  });
+</script>

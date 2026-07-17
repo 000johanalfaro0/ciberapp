@@ -1,0 +1,112 @@
+---
+import Base from '../../layouts/Base.astro';
+import Toggle from '../../components/Toggle.astro';
+import CipherXor from '../../components/CipherXor.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const lecciones = await getCollection('lecciones');
+  return lecciones.map(l => ({
+    params: { leccion: l.data.id || l.id },
+    props: { leccion: l },
+  }));
+}
+
+const { leccion } = Astro.props;
+
+let Content = null;
+if (leccion) {
+  try {
+    const rendered = await render(leccion);
+    Content = rendered.Content;
+  } catch (e) {
+    console.error('render falló para', leccion?.id, e.message);
+  }
+}
+
+const titulo  = leccion?.data?.titulo || 'Lección';
+const crumb   = leccion?.data?.crumb || '';
+const modulo  = leccion?.data?.modulo || 'M0';
+const leccionId = leccion?.data?.id || leccion?.id;
+const generadoPor = leccion?.data?.generado_por || 'demo';
+---
+
+<Base title={`${titulo} · raíz_`} tag={leccionId} view="leccion">
+  <section class="view enter">
+    <div class="lread">
+      <a class="backlink" href={`/m/${modulo}`}>← módulo</a>
+      <div class="crumb">{crumb}</div>
+      <h2>{titulo}</h2>
+
+      {Content ? (
+        <article class="leccion-cuerpo">
+          <Content />
+        </article>
+      ) : (
+        <p style="color:var(--muted);">Lección en construcción. Volvé en unos minutos.</p>
+      )}
+
+      {leccion?.data?.lab?.tipo === 'toggle' && (
+        <Toggle pregunta={leccion.data.lab.descripcion} />
+      )}
+
+      {leccion?.data?.lab?.tipo === 'cipher_xor' && (
+        <CipherXor
+          texto_plano={leccion.data.lab.texto_plano}
+          clave={leccion.data.lab.clave}
+          cifrado={leccion.data.lab.cifrado}
+        />
+      )}
+
+      <hr class="rule" />
+
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+        <a class="btn ghost" href={`/m/${modulo}`}>← módulo</a>
+        <span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--faint);">
+          {generadoPor}
+        </span>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .leccion-cuerpo :global(h1) { display: none; }
+  .leccion-cuerpo :global(h2) {
+    font-size: 22px; font-weight: 680; letter-spacing: -.02em;
+    margin: 32px 0 14px; text-wrap: balance;
+  }
+  .leccion-cuerpo :global(h3) {
+    font-size: 17px; font-weight: 650; margin: 24px 0 10px;
+  }
+  .leccion-cuerpo :global(p) {
+    font-size: 17px; line-height: 1.7; color: #27272a;
+    margin: 0 0 18px; text-wrap: pretty;
+  }
+  .leccion-cuerpo :global(ul),
+  .leccion-cuerpo :global(ol) {
+    font-size: 17px; line-height: 1.7; color: #27272a;
+    margin: 0 0 18px; padding-left: 24px;
+  }
+  .leccion-cuerpo :global(li) { margin-bottom: 6px; }
+  .leccion-cuerpo :global(code) {
+    font-family: ui-monospace, Menlo, monospace; font-size: 14px;
+    background: var(--paper); border: 1px solid var(--line);
+    border-radius: 4px; padding: 1px 6px;
+  }
+  .leccion-cuerpo :global(pre) {
+    font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+    background: var(--paper); border: 1px solid var(--line);
+    border-radius: 10px; padding: 16px; overflow-x: auto; margin: 18px 0;
+  }
+  .leccion-cuerpo :global(pre code) { background: transparent; border: 0; padding: 0; }
+  .leccion-cuerpo :global(blockquote) {
+    border-left: 3px solid var(--accent); margin: 18px 0;
+    padding: 4px 16px; color: var(--muted); font-style: italic;
+  }
+  .leccion-cuerpo :global(strong) { font-weight: 650; color: var(--ink); }
+  .leccion-cuerpo :global(.term) {
+    color: var(--accent); border-bottom: 1px dashed var(--accent); text-decoration: none;
+  }
+  .leccion-cuerpo :global(.term:hover) { background: var(--accent-soft); }
+</style>

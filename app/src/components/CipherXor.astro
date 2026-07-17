@@ -1,0 +1,597 @@
+---
+interface Props {
+  texto_plano?: string;
+  clave?: string;
+  cifrado?: string;
+}
+
+const {
+  texto_plano = "HACK",
+  clave = "KEY",
+  cifrado = "03041a00"
+} = Astro.props;
+---
+
+<div class="lab-cipher" data-texto-plano={texto_plano} data-clave={clave} data-cifrado={cifrado}>
+  <div class="lab-k">Lab Interactivo: Cifrado XOR</div>
+  
+  <div class="tabs">
+    <button class="tab-btn active" data-mode="sandbox">Modo Sandbox</button>
+    <button class="tab-btn" data-mode="ctf">Desafío CTF</button>
+  </div>
+  
+  <!-- Sandbox View -->
+  <div class="sandbox-view mode-view">
+    <p class="lab-q">
+      Modificá el texto plano o la clave. Hace clic en cualquier bit de la cuadrícula de 8 bits para alterarlo en tiempo real y ver cómo afecta el resultado del XOR binario.
+    </p>
+    
+    <div class="input-grid">
+      <div class="input-group">
+        <label class="input-label">Texto Plano</label>
+        <input type="text" class="sandbox-plaintext input-field" value={texto_plano} placeholder="Ej: HACK" maxlength="24" />
+      </div>
+      
+      <div class="input-group">
+        <label class="input-label">Clave (Repetitiva)</label>
+        <input type="text" class="sandbox-key input-field" value={clave} placeholder="Ej: KEY" maxlength="24" />
+      </div>
+    </div>
+    
+    <div class="input-group" style="margin-top: 14px;">
+      <label class="input-label">Texto Cifrado Resultante (HEX)</label>
+      <div class="sandbox-ciphertext-hex input-field mono" style="background: var(--accent-soft); font-weight: bold; color: var(--accent); min-height: 44px; display: flex; align-items: center; word-break: break-all;">
+        {cifrado}
+      </div>
+    </div>
+    
+    <div class="grid-container sandbox-grid">
+      <!-- Generado dinámicamente vía JS -->
+    </div>
+  </div>
+  
+  <!-- CTF View -->
+  <div class="ctf-view mode-view hide">
+    <p class="lab-q">
+      Se ha interceptado un mensaje cifrado en hexadecimal. Conociendo la longitud de la clave, ingresá la clave correcta para descifrar el texto plano original.
+    </p>
+    
+    <div class="ctf-card">
+      <div class="ctf-row">
+        <span class="ctf-label">Cifrado (HEX):</span>
+        <span class="ctf-val mono select-all">{cifrado}</span>
+      </div>
+      <div class="ctf-row">
+        <span class="ctf-label">Longitud de Clave:</span>
+        <span class="ctf-val mono">{clave ? clave.length : 0} caracteres</span>
+      </div>
+    </div>
+    
+    <div class="input-group" style="margin-top:20px;">
+      <label class="input-label">Ingresá la Clave</label>
+      <input type="text" class="ctf-key-input input-field mono" placeholder="???" maxlength="32" />
+    </div>
+    
+    <div class="input-group">
+      <label class="input-label">Texto Descifrado Resultante</label>
+      <div class="ctf-decrypted-output input-field mono" style="background: var(--paper); min-height: 44px; display: flex; align-items: center; word-break: break-all;">
+        
+      </div>
+    </div>
+    
+    <div class="victory-banner hide">
+      <div class="victory-title">✔ MISIÓN COMPLETADA</div>
+      <div class="victory-text">¡Excelente! Has roto el cifrado XOR y recuperado el texto original.</div>
+      <div class="victory-meta mono">
+        Texto: <span class="victory-highlight">{texto_plano}</span> | Clave: <span class="victory-highlight">{clave}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .lab-cipher {
+    border: 1px solid var(--line-2);
+    border-radius: 18px;
+    padding: 24px;
+    margin: 28px 0;
+    background: var(--bg);
+    font-family: ui-monospace, Menlo, Monaco, "Cascadia Code", monospace;
+  }
+  .lab-k {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 12px;
+  }
+  .lab-q {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+    font-size: 15px;
+    color: var(--muted);
+    margin: 0 0 20px;
+    line-height: 1.6;
+  }
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid var(--line-2);
+    margin-bottom: 20px;
+    gap: 8px;
+  }
+  .tab-btn {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    background: none;
+    border: none;
+    padding: 10px 16px;
+    cursor: pointer;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s ease;
+  }
+  .tab-btn:hover {
+    color: var(--ink);
+  }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .hide {
+    display: none !important;
+  }
+  .input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 600px) {
+    .input-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .input-group {
+    margin-bottom: 18px;
+  }
+  .input-label {
+    display: block;
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .input-field {
+    font-family: inherit;
+    font-size: 15px;
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--line-2);
+    border-radius: 8px;
+    background: var(--paper);
+    color: var(--ink);
+    outline: none;
+    transition: all 0.15s ease;
+  }
+  .input-field:focus {
+    border-color: var(--accent);
+    background: var(--bg);
+  }
+  .grid-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 20px;
+  }
+  .char-block {
+    border: 1px solid var(--line-2);
+    border-radius: 12px;
+    padding: 14px;
+    background: var(--paper);
+    transition: all 0.15s ease;
+  }
+  .char-block:hover {
+    border-color: var(--accent);
+  }
+  .char-block-header {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--accent);
+    margin-bottom: 12px;
+    border-bottom: 1px dashed var(--line-2);
+    padding-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .char-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .char-row:last-child {
+    margin-bottom: 0;
+  }
+  .result-row {
+    background: var(--accent-soft);
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(91, 91, 214, 0.15);
+  }
+  .char-label {
+    font-size: 13px;
+    color: var(--ink);
+    min-width: 160px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .char-val {
+    font-weight: bold;
+    color: var(--accent);
+    background: rgba(91, 91, 214, 0.08);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  .char-code {
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .bit-grid {
+    display: flex;
+    gap: 3px;
+  }
+  .bit-box {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    border: 1px solid var(--line-2);
+    background: var(--bg);
+    cursor: pointer;
+    user-select: none;
+    border-radius: 4px;
+    transition: all 0.1s ease;
+  }
+  .bit-box:hover:not(.read-only) {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .bit-box.bit-1 {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+  .bit-box.bit-0 {
+    color: var(--muted);
+  }
+  .bit-box.read-only {
+    cursor: default;
+  }
+  .bit-box.read-only:hover {
+    border-color: var(--line-2);
+    transform: none;
+  }
+  .bit-box.read-only.bit-1 {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  
+  /* CTF styles */
+  .ctf-card {
+    border: 1px solid var(--line-2);
+    background: var(--paper);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .ctf-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .ctf-row:last-child {
+    border-bottom: none;
+  }
+  .ctf-label {
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .ctf-val {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--ink);
+  }
+  .select-all {
+    user-select: all;
+  }
+  .victory-banner {
+    background: #ecfdf5;
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+    text-align: center;
+    color: #065f46;
+    animation: victory-pulse 2s infinite ease-in-out;
+  }
+  .victory-title {
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+  .victory-text {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  .victory-meta {
+    font-size: 13px;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 6px 12px;
+    border-radius: 6px;
+    display: inline-block;
+  }
+  .victory-highlight {
+    font-weight: bold;
+    color: #047857;
+  }
+  
+  @keyframes victory-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  }
+</style>
+
+<script>
+  function setupCipherLabs() {
+    document.querySelectorAll('.lab-cipher').forEach((container) => {
+      // Evitar doble inicialización
+      if (container.classList.contains('initialized')) return;
+      container.classList.add('initialized');
+
+      const textoPlano = container.getAttribute('data-texto-plano') || 'HACK';
+      const clave = container.getAttribute('data-clave') || 'KEY';
+      const cifrado = container.getAttribute('data-cifrado') || '03041a00';
+
+      // Vistas
+      const sandboxView = container.querySelector('.sandbox-view');
+      const ctfView = container.querySelector('.ctf-view');
+      
+      // Tabs
+      const tabBtns = container.querySelectorAll('.tab-btn');
+      tabBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          tabBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const mode = btn.getAttribute('data-mode');
+          if (mode === 'sandbox') {
+            sandboxView?.classList.remove('hide');
+            ctfView?.classList.add('hide');
+          } else {
+            ctfView?.classList.remove('hide');
+            sandboxView?.classList.add('hide');
+          }
+        });
+      });
+
+      // Sandbox Mode Elements
+      const plaintextInput = container.querySelector('.sandbox-plaintext') as HTMLInputElement;
+      const keyInput = container.querySelector('.sandbox-key') as HTMLInputElement;
+      const ciphertextHexOut = container.querySelector('.sandbox-ciphertext-hex');
+      const sandboxGrid = container.querySelector('.sandbox-grid');
+
+      // CTF Mode Elements
+      const ctfKeyInput = container.querySelector('.ctf-key-input') as HTMLInputElement;
+      const ctfDecryptedOut = container.querySelector('.ctf-decrypted-output');
+      const victoryBanner = container.querySelector('.victory-banner');
+
+      // Mostrar caracteres imprimibles de forma segura
+      function showChar(code: number) {
+        if (code < 32 || code > 126) return '·';
+        return String.fromCharCode(code);
+      }
+
+      function escapeHtml(str: string) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      // Render Sandbox
+      function renderSandbox() {
+        if (!plaintextInput || !keyInput || !ciphertextHexOut || !sandboxGrid) return;
+        
+        const plaintext = plaintextInput.value;
+        const key = keyInput.value;
+        
+        // 1. Calcular cifrado hex
+        let hexCipher = '';
+        for (let i = 0; i < plaintext.length; i++) {
+          const pCode = plaintext.charCodeAt(i) & 255;
+          const kCode = key.length > 0 ? (key.charCodeAt(i % key.length) & 255) : 0;
+          const xorCode = pCode ^ kCode;
+          hexCipher += xorCode.toString(16).padStart(2, '0');
+        }
+        ciphertextHexOut.textContent = hexCipher || '(vacío)';
+
+        // 2. Generar grilla
+        if (plaintext.length === 0) {
+          sandboxGrid.innerHTML = `
+            <div style="text-align:center;color:var(--muted);padding:26px;font-size:14px;border:1px dashed var(--line-2);border-radius:12px;">
+              Ingresá texto plano para visualizar los bits
+            </div>
+          `;
+          return;
+        }
+
+        let gridHtml = '';
+        for (let i = 0; i < plaintext.length; i++) {
+          const pCode = plaintext.charCodeAt(i) & 255;
+          const keyIndex = key.length > 0 ? (i % key.length) : -1;
+          const kCode = keyIndex !== -1 ? (key.charCodeAt(keyIndex) & 255) : 0;
+          const resCode = pCode ^ kCode;
+
+          // Bits (8 bits)
+          const pBin = pCode.toString(2).padStart(8, '0');
+          const kBin = kCode.toString(2).padStart(8, '0');
+          const rBin = resCode.toString(2).padStart(8, '0');
+
+          gridHtml += `
+            <div class="char-block">
+              <div class="char-block-header">
+                <span>Posición ${i + 1}</span>
+                <span style="color:var(--faint);">Index Texto: ${i} | Index Clave: ${keyIndex !== -1 ? keyIndex : 'N/A'}</span>
+              </div>
+              
+              <!-- Fila Plano -->
+              <div class="char-row">
+                <div class="char-label">
+                  <span>Plano:</span>
+                  <span class="char-val">'${escapeHtml(showChar(pCode))}'</span>
+                  <span class="char-code">(${pCode} / 0x${pCode.toString(16).toUpperCase().padStart(2, '0')})</span>
+                </div>
+                <div class="bit-grid" data-type="plaintext" data-char-index="${i}">
+                  ${pBin.split('').map((bit, bitIdx) => {
+                    const power = 7 - bitIdx;
+                    return `<div class="bit-box bit-${bit}" data-power="${power}">${bit}</div>`;
+                  }).join('')}
+                </div>
+              </div>
+
+              <!-- Fila Clave -->
+              <div class="char-row">
+                <div class="char-label">
+                  <span>Clave:</span>
+                  <span class="char-val">${keyIndex !== -1 ? `'${escapeHtml(showChar(kCode))}'` : 'N/A'}</span>
+                  <span class="char-code">${keyIndex !== -1 ? `(${kCode} / 0x${kCode.toString(16).toUpperCase().padStart(2, '0')})` : ''}</span>
+                </div>
+                <div class="bit-grid" data-type="key" data-key-index="${keyIndex}">
+                  ${keyIndex !== -1 ? kBin.split('').map((bit, bitIdx) => {
+                    const power = 7 - bitIdx;
+                    return `<div class="bit-box bit-${bit}" data-power="${power}">${bit}</div>`;
+                  }).join('') : `<div style="font-size:12px;color:var(--faint);">Define una clave</div>`}
+                </div>
+              </div>
+
+              <!-- Fila XOR Result -->
+              <div class="char-row result-row">
+                <div class="char-label">
+                  <span>XOR:</span>
+                  <span class="char-val" style="color:var(--accent); font-weight: bold;">'${escapeHtml(showChar(resCode))}'</span>
+                  <span class="char-code">(${resCode} / 0x${resCode.toString(16).toUpperCase().padStart(2, '0')})</span>
+                </div>
+                <div class="bit-grid">
+                  ${rBin.split('').map((bit) => {
+                    return `<div class="bit-box read-only bit-${bit}">${bit}</div>`;
+                  }).join('')}
+                </div>
+              </div>
+            </div>
+          `;
+        }
+        sandboxGrid.innerHTML = gridHtml;
+      }
+
+      // Event Listeners
+      if (plaintextInput) plaintextInput.addEventListener('input', renderSandbox);
+      if (keyInput) keyInput.addEventListener('input', renderSandbox);
+
+      // Delegación de clicks en bits
+      if (sandboxGrid) {
+        sandboxGrid.addEventListener('click', (e) => {
+          const target = e.target as HTMLElement;
+          const bitBox = target.closest('.bit-box') as HTMLElement;
+          if (!bitBox || bitBox.classList.contains('read-only')) return;
+
+          const grid = bitBox.closest('.bit-grid') as HTMLElement;
+          const type = grid.getAttribute('data-type');
+          const power = parseInt(bitBox.getAttribute('data-power') || '0', 10);
+
+          if (type === 'plaintext' && plaintextInput) {
+            const charIndex = parseInt(grid.getAttribute('data-char-index') || '0', 10);
+            let plaintext = plaintextInput.value;
+            if (charIndex >= plaintext.length) return;
+
+            const pCode = plaintext.charCodeAt(charIndex) & 255;
+            const newCode = pCode ^ (1 << power);
+            
+            plaintext = plaintext.slice(0, charIndex) + String.fromCharCode(newCode) + plaintext.slice(charIndex + 1);
+            plaintextInput.value = plaintext;
+            renderSandbox();
+            navigator.vibrate?.(10);
+          } else if (type === 'key' && keyInput) {
+            const keyIndex = parseInt(grid.getAttribute('data-key-index') || '0', 10);
+            let key = keyInput.value;
+            if (keyIndex < 0 || keyIndex >= key.length) return;
+
+            const kCode = key.charCodeAt(keyIndex) & 255;
+            const newCode = kCode ^ (1 << power);
+
+            key = key.slice(0, keyIndex) + String.fromCharCode(newCode) + key.slice(keyIndex + 1);
+            keyInput.value = key;
+            renderSandbox();
+            navigator.vibrate?.(10);
+          }
+        });
+      }
+
+      // Descifrado CTF
+      function renderCtf() {
+        if (!ctfKeyInput || !ctfDecryptedOut || !victoryBanner) return;
+        const enteredKey = ctfKeyInput.value;
+        
+        // Parsear hex a bytes
+        const hex = cifrado.trim();
+        const bytes = [];
+        for (let i = 0; i < hex.length; i += 2) {
+          const byteVal = parseInt(hex.slice(i, i + 2), 16);
+          if (!isNaN(byteVal)) {
+            bytes.push(byteVal);
+          }
+        }
+
+        // Decodificar
+        let decryptedText = '';
+        for (let i = 0; i < bytes.length; i++) {
+          const kCode = enteredKey.length > 0 ? (enteredKey.charCodeAt(i % enteredKey.length) & 255) : 0;
+          const decCode = bytes[i] ^ kCode;
+          decryptedText += String.fromCharCode(decCode);
+        }
+
+        ctfDecryptedOut.textContent = decryptedText || '(ingresá clave para descifrar)';
+
+        // Chequear victoria
+        if (decryptedText === textoPlano && enteredKey.length > 0) {
+          victoryBanner.classList.remove('hide');
+          navigator.vibrate?.([100, 50, 100]);
+        } else {
+          victoryBanner.classList.add('hide');
+        }
+      }
+
+      if (ctfKeyInput) ctfKeyInput.addEventListener('input', renderCtf);
+
+      // Render inicial
+      renderSandbox();
+      renderCtf();
+    });
+  }
+
+  // Ejecutar al cargar la página
+  setupCipherLabs();
+  document.addEventListener('astro:page-load', setupCipherLabs);
+</script>

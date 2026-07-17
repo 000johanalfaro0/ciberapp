@@ -1,0 +1,275 @@
+{
+  "$schema": "https://raiz.app/schema/curriculum.json",
+  "meta": {
+    "name": "raíz_",
+    "version": "0.1.0",
+    "language": "es",
+    "createdAt": "2026-06-27",
+    "tagline": "Ciberseguridad desde el cimiento absoluto. Carrera técnica de hacking ofensivo en español, desde cero.",
+    "rules": {
+      "profundidad_anclada": "Cada módulo declara libro(s) ancla y meta de competencia.",
+      "grafo_dirigido": "Cada nodo declara depends_on e introduces.",
+      "no_asumir": "Si un término aparece sin un nodo upstream que lo definió, es un BUG del currículo."
+    }
+  },
+  "phases": [
+    { "id": "F0", "name": "Cimientos que NADIE más enseña (tu diferencial)", "modules": ["M0","M1","M2","M3"] },
+    { "id": "F1", "name": "Fundamentos profesionales", "modules": ["M4","M5","M6","M7"] },
+    { "id": "F2", "name": "Arsenal del pentester", "modules": ["M8","M9","M10","M11"] },
+    { "id": "F3", "name": "Explotación", "modules": ["M12","M13","M14"] },
+    { "id": "F4", "name": "Post-explotación y entornos corporativos", "modules": ["M15","M16","M17"] },
+    { "id": "F5", "name": "Especializaciones 2026/2027", "modules": ["AI-LLM","CLOUD","MALWARE","RUST"] }
+  ],
+  "modules": {
+    "M0": {
+      "title": "Cimientos de Hierro",
+      "phase": "F0",
+      "meta": "Leer binario/hex, entender compuertas lógicas y XOR, saber dónde viven los datos (CPU/RAM/disco).",
+      "depends_on": [],
+      "introduces": ["electricidad_estado","bit","byte","binario","hexadecimal","ASCII","transistor","compuerta_NOT","compuerta_AND","compuerta_OR","compuerta_XOR","CPU","RAM","disco","buffer"],
+      "libros": ["CSAPP-3e:cap2", "nand2tetris:1-3"],
+      "lecciones_estimadas": 5,
+      "status": "sintetizado",
+      "nota_scope": "Solo caps 1-3 de nand2tetris (Boolean Logic/Arithmetic/Sequential) + CSAPP cap 2. Los caps 4+ de nand2tetris (Machine Language, Architecture, Assembler, VM, Compiler, OS) pertenecen a M2/M3, no a M0."
+    },
+    "M1": {
+      "title": "La Terminal y Linux (tu casa)",
+      "phase": "F0",
+      "meta": "Moverte por Linux desde CLI; archivos, usuarios, permisos y procesos.",
+      "depends_on": ["M0"],
+      "introduces": ["sistema_operativo","shell","sistema_archivos","rutas","comandos","usuarios_grupos","permisos_rwx","procesos","redireccion_pipes","bash_basico"],
+      "libros": ["LinuxBasics-ForHackers", "Pendiente: TheLinuxCommandLine"],
+      "lecciones_estimadas": 12,
+      "status": "material_listo",
+      "nota": "permisos rwx = 3 bits → reutiliza binario de M0 (chmod 755)"
+    },
+    "M2": {
+      "title": "La Máquina por Dentro (Sistemas Operativos)",
+      "phase": "F0",
+      "meta": "Procesos, hilos, y sobre todo el modelo de memoria (stack/heap). Base para exploits de memoria.",
+      "depends_on": ["M0","M1"],
+      "introduces": ["kernel_user_space","syscall","proceso_hilo","memoria_virtual","stack","heap","puntero","ejecucion_programa"],
+      "libros": ["OSTEP", "CSAPP-3e:cap9"],
+      "lecciones_estimadas": 10,
+      "status": "material_listo",
+      "siembra": "acá se siembra el buffer overflow (M9/M13)"
+    },
+    "M3": {
+      "title": "Cómo se Construye (y se Rompe) un Programa",
+      "phase": "F0",
+      "meta": "Del código fuente al código máquina; leer ensamblador básico; ver un programa en memoria.",
+      "depends_on": ["M0","M2"],
+      "introduces": ["variable","logica_programacion","compilado_interpretado","compilacion","codigo_maquina","ensamblador","registros","instrucciones_asm","gestion_memoria_C"],
+      "libros": ["CSAPP-3e:cap1-3", "Hacking-ArtExploit-2e:0x2"],
+      "lecciones_estimadas": 12,
+      "status": "material_listo"
+    },
+    "M4": {
+      "title": "Redes desde el Cable",
+      "phase": "F1",
+      "meta": "Cómo viaja un dato a otra máquina capa por capa.",
+      "depends_on": ["M0","M1"],
+      "introduces": ["medios_fisicos","direccion_MAC","modelo_capas","IP","subnetting","enrutamiento","TCP_UDP","puertos","DNS","paquete"],
+      "libros": ["Kurose-Networking-TopDown-8e"],
+      "lecciones_estimadas": 14,
+      "status": "material_listo",
+      "lab_estrella": "conector de nodos estilo Packet Tracer con cytoscape.js"
+    },
+    "M5": {
+      "title": "La Web por Dentro",
+      "phase": "F1",
+      "meta": "Qué pasa desde Enter en una URL hasta ver la página.",
+      "depends_on": ["M4","M1"],
+      "introduces": ["cliente_servidor","HTTP_request_response","HTML_CSS_JS","base_datos","SQL","cookies","sesiones","autenticacion","APIs"],
+      "libros": ["TWAHH-2e:cap_base", "BugBountyBootcamp:cap1-2"],
+      "lecciones_estimadas": 10,
+      "status": "material_listo",
+      "nota": "TWAHH 2011 (obsoleto pero canónico); complementar con PortSwigger Academy"
+    },
+    "M6": {
+      "title": "Criptografía",
+      "phase": "F1",
+      "meta": "Del XOR al TLS que cierra el candadito del navegador.",
+      "depends_on": ["M0","M3"],
+      "introduces": ["cifrado_simetrico","clave","hashing","cifrado_asimetrico","clave_publica_privada","firmas","TLS_HTTPS","post_quantum","criptomoneda"],
+      "libros": ["Serious-Crypto-1e"],
+      "lecciones_estimadas": 12,
+      "status": "material_parcial",
+      "gap": "Tu PDF es 1ra ed (2017, 314pp). Faltan Caps 13-15 (TLS, PQC, blockchain) → rellenar con knowledge-pack de NIST PQC + Bitcoin docs.",
+      "toc_alternativa": "toc-scraped/serious-cryptography-2e.md"
+    },
+    "M7": {
+      "title": "Windows y su Línea de Comandos",
+      "phase": "F1",
+      "meta": "Windows Fundamentals + Intro a Windows CLI (paralelo a CPTS).",
+      "depends_on": ["M1","M2"],
+      "introduces": ["windows_registry","services","WMI","powershell","cmd","event_viewer","SAM","ActiveDirectory_intro"],
+      "libros": ["Windows-Internals-7e-Part1"],
+      "lecciones_estimadas": 10,
+      "status": "material_parcial",
+      "gap": "Solo Part 1 (1120pp). Falta Part 2 (storage, networking, services)."
+    },
+    "M8": {
+      "title": "Hacking Ético: la Metodología",
+      "phase": "F2",
+      "meta": "Pensar como atacante con método; marco legal/ético.",
+      "depends_on": ["M1","M4"],
+      "introduces": ["fases_pentest","reconocimiento","escaneo","explotacion","post_explotacion","reporte","legalidad_consentimiento","OSINT","escaneo_puertos_Nmap","enumeracion"],
+      "libros": ["Pentest-Weidman", "HackerPlaybook-3-DEC:part1-3"],
+      "lecciones_estimadas": 10,
+      "status": "material_listo"
+    },
+    "M9": {
+      "title": "Escaneo y Evaluación de Vulnerabilidades",
+      "phase": "F2",
+      "meta": "Nessus, NSE scripts, CVE/NVD.",
+      "depends_on": ["M4","M8"],
+      "introduces": ["vulnerability_scanner","Nessus","NSE_scripts","CVE","NVD","CVSS","false_positive"],
+      "libros": ["Nessus-10-12"],
+      "lecciones_estimadas": 8,
+      "status": "material_listo"
+    },
+    "M10": {
+      "title": "El Arsenal del Pentester",
+      "phase": "F2",
+      "meta": "Shells & Payloads, Metasploit, Burp, transferencia de archivos.",
+      "depends_on": ["M8","M5"],
+      "introduces": ["reverse_shell","bind_shell","payload","Metasploit","msfconsole","exploit_module","BurpSuite","proxy_intercept","file_transfer"],
+      "libros": ["Metasploit-Cookbook"],
+      "lecciones_estimadas": 12,
+      "status": "material_listo",
+      "nota": "Metasploit Cookbook (Packt, viejo). Complementar con Metasploit Unleashed (gratis)."
+    },
+    "M11": {
+      "title": "Ataques a Contraseñas",
+      "phase": "F2",
+      "meta": "Hydra, Hashcat, John, brute forcing.",
+      "depends_on": ["M6","M8"],
+      "introduces": ["hash_password","salt","brute_force","diccionario","rainbow_table","Hydra","Hashcat","John","rule_based_attack","mask_attack"],
+      "libros": [],
+      "lecciones_estimadas": 8,
+      "status": "material_falta",
+      "plan_knowledge_pack": "Hashcat wiki + John docs + TryHackMe Password Attacks + HackTricks passwords"
+    },
+    "M12": {
+      "title": "Explotación Web (OWASP Top 10)",
+      "phase": "F3",
+      "meta": "SQLi, XSS, CSRF, LFI/RFI, File Upload, Command Injection, IDOR.",
+      "depends_on": ["M5","M8"],
+      "introduces": ["SQL_injection","XSS_reflected","XSS_stored","XSS_DOM","CSRF","LFI","RFI","file_upload","command_injection","IDOR","SSRF","XXE","SSTI"],
+      "libros": ["BugBountyBootcamp", "TWAHH-2e"],
+      "lecciones_estimadas": 16,
+      "status": "material_listo",
+      "nota": "Bug Bounty Bootcamp más actual que TWAHH. PortSwigger Academy como práctica."
+    },
+    "M13": {
+      "title": "Explotación de Binarios",
+      "phase": "F3",
+      "meta": "Buffer overflow → sobrescritura de retorno → shellcode → ROP.",
+      "depends_on": ["M2","M3","M0"],
+      "introduces": ["buffer_overflow","stack_overflow","return_address_overwrite","shellcode","NOP_sled","ASLR","DEP","NX","ROP","gadget","canary"],
+      "libros": ["Hacking-ArtExploit-2e"],
+      "lecciones_estimadas": 14,
+      "status": "material_listo",
+      "lab": "sandbox server-side (fase posterior, no navegador)"
+    },
+    "M14": {
+      "title": "Evasión de Antivirus y EDR",
+      "phase": "F3",
+      "meta": "Construir tools custom en Go que evadan defensas modernas.",
+      "depends_on": ["M3","M10","M13"],
+      "introduces": ["AV","EDR","AMSI","signature_detection","behavioral_detection","packer","crypter","process_injection","API_unhooking","AMSI_bypass","lolbins"],
+      "libros": [],
+      "lecciones_estimadas": 10,
+      "status": "material_falta",
+      "plan_knowledge_pack": "toc-scraped/evasion-engineering.md (TOC + sample Cap 2) + MITRE ATT&CK TA0005 + GitHub repo dc401/nostarch-evasion-engineering"
+    },
+    "M15": {
+      "title": "Escalada de Privilegios",
+      "phase": "F4",
+      "meta": "Convertir acceso chico en control total. Linux + Windows.",
+      "depends_on": ["M1","M2","M9"],
+      "introduces": ["privesc","SUID","SGID","sudo_misconfiguration","cron_exploit","kernel_exploit","PATH_hijacking","capabilities","Windows_token_impersonation","DLL_hijacking","Unquoted_service_path"],
+      "libros": ["LinuxBasics-ForHackers", "RTFM-RedTeam-v2", "HackerPlaybook-3-DEC:part6"],
+      "lecciones_estimadas": 12,
+      "status": "material_listo"
+    },
+    "M16": {
+      "title": "Pivoting, Túneles y Movimiento Lateral",
+      "phase": "F4",
+      "meta": "Una vez dentro, llegar a otras máquinas de la red.",
+      "depends_on": ["M4","M10","M15"],
+      "introduces": ["pivoting","port_forwarding","SSH_tunneling","SOCKS_proxy","chisel","ligolo","double_pivot","lateral_movement","pass_the_hash"],
+      "libros": ["HackerPlaybook-3-DEC:part8"],
+      "lecciones_estimadas": 8,
+      "status": "material_parcial",
+      "plan_knowledge_pack": "HackTricks pivoting + THM Wreath + TryHackMe Pivoting & Tunneling module"
+    },
+    "M17": {
+      "title": "Active Directory: Enumeración y Ataques",
+      "phase": "F4",
+      "meta": "Núcleo del pentest corporativo. AD = OSCP y CPTS.",
+      "depends_on": ["M7","M10","M15","M16"],
+      "introduces": ["Active_Directory","domain_controller","Kerberos","NTLM","GPO","SPN","BloodHound","kerberoasting","asreproasting","DCSync","golden_ticket","silver_ticket","constrained_delegation"],
+      "libros": ["HackerPlaybook-3-DEC:part7", "RTFM-RedTeam-v2"],
+      "lecciones_estimadas": 14,
+      "status": "material_listo"
+    },
+    "AI-LLM": {
+      "title": "AI/LLM Security",
+      "phase": "F5",
+      "meta": "Atacar, defender y auditar sistemas AI modernos.",
+      "depends_on": ["M5","M6","M12"],
+      "introduces": ["modelo_ML","entrenamiento","inferencia","fine_tuning","RAG","agentic_AI","data_poisoning","model_theft","prompt_injection","MITRE_ATLAS","OWASP_LLM_Top10","MAESTRO","guardrails","alignment"],
+      "libros": [],
+      "lecciones_estimadas": 10,
+      "status": "material_falta",
+      "plan_knowledge_pack": "toc-scraped/practical-ai-security.md + sample Cap 3 + Colab notebooks + OWASP LLM Top 10 + MITRE ATLAS + GitHub harriethacks/aisecurityhandbook"
+    },
+    "CLOUD": {
+      "title": "Cloud / API Security",
+      "phase": "F5",
+      "meta": "AWS/GCP pentest + API hacking.",
+      "depends_on": ["M5","M12","M17"],
+      "introduces": ["AWS_IAM","S3_bucket","EC2_metadata","IMDSv2","Pacu","Prowler","CloudFox","GraphQL","REST","JWT","BOLA","mass_assignment"],
+      "libros": [],
+      "lecciones_estimadas": 14,
+      "status": "material_falta",
+      "plan_knowledge_pack": "toc-scraped/hacking-apis.md + AWS docs + Pacu GitHub + HackTheBox Cloud Track"
+    },
+    "MALWARE": {
+      "title": "Análisis de Malware / Reversing",
+      "phase": "F5",
+      "meta": "Disectar binarios maliciosos; reversing estático y dinámico.",
+      "depends_on": ["M3","M13"],
+      "introduces": ["PE_format","static_analysis","dynamic_analysis","sandbox","IDA","Ghidra","x64dbg","YARA","packing_detection","anti_debug","anti_VM","API_call_tracing"],
+      "libros": ["Practical-Malware-Analysis"],
+      "lecciones_estimadas": 14,
+      "status": "material_listo",
+      "nota": "PMA (2012, canónico). Complementar con Malware Unicorn RE101 + OpenSecurityTraining2."
+    },
+    "RUST": {
+      "title": "Rust Ofensivo",
+      "phase": "F5",
+      "meta": "Implantes y herramientas propias en Rust (alternativa memory-safe a C).",
+      "depends_on": ["M3","M10"],
+      "introduces": ["Rust_basics","ownership","borrow_checker","cargo","unsafe_Rust","FFI","shellcode_Rust","implant_Rust"],
+      "libros": [],
+      "lecciones_estimadas": 8,
+      "status": "material_falta",
+      "plan_knowledge_pack": "Black Hat Rust (Simoons, 2021) TOC + RustSec Advisory DB + The Rust Programming Language 3e (No Starch 2025)"
+    }
+  },
+  "glossary_source": "Autogenerado por la unión de todos los 'introduces' de cada módulo. Cada término debe tener: definición corta, módulo que lo introduce, módulos que lo usan.",
+  "coverage_matrix": {
+    "material_listo": ["M0","M1","M2","M3","M4","M5","M8","M9","M10","M12","M13","M15","M17","MALWARE"],
+    "material_parcial": ["M6","M7","M16"],
+    "material_falta": ["M11","M14","AI-LLM","CLOUD","RUST"]
+  },
+  "stats": {
+    "total_modulos": 21,
+    "total_lecciones_estimadas": 222,
+    "cobertura_material": "14/21 módulos (67%) con material principal listo tras docling batch",
+    "falta_conseguir": "6 knowledge-packs + 3 compras recomendadas (Serious Crypto 2e, Win Internals Part 2, Evasion Engineering)"
+  }
+}

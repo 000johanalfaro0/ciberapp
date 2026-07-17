@@ -1,0 +1,112 @@
+---
+import Base from '../../layouts/Base.astro';
+import grafo from '../../data/grafo.json';
+import { getCollection } from 'astro:content';
+
+export function getStaticPaths() {
+  return Object.keys(grafo.modules).map(id => ({ params: { modulo: id } }));
+}
+
+const { modulo } = Astro.params;
+const mod = (grafo.modules as any)[modulo];
+
+if (!mod) return Astro.redirect('/404');
+
+// obtener lecciones de la colección content/
+const todasLecciones = await getCollection('lecciones');
+const leccionesReales = todasLecciones
+  .filter(l => l.data.modulo === modulo)
+  .map(l => ({
+    id: l.data.id || l.id,
+    num: l.data.numero,
+    titulo: l.data.titulo,
+    hecho: false,
+    disponible: true,
+  }))
+  .sort((a, b) => a.num - b.num);
+
+// estado en MVP: active si es M0 o si tiene lecciones reales en disco
+const estado = (modulo === 'M0' || leccionesReales.length > 0) ? 'active' : 'locked';
+
+// fallback a placeholders si no hay archivos markdown reales
+const leccionesAMostrar = leccionesReales.length > 0 ? leccionesReales : Array.from({ length: mod.lecciones_estimadas }, (_, i) => ({
+  id: `${modulo}-L${String(i+1).padStart(2,'0')}`,
+  num: i+1,
+  titulo: `Lección ${i+1}`,
+  hecho: false,
+  disponible: estado === 'active' && i === 0,
+}));
+
+// dependencias upstream (para mostrar el porqué de los prerrequisitos)
+const deps = (mod.depends_on || []).map((d: string) => ({
+  id: d,
+  title: (grafo.modules as any)[d]?.title || d,
+}));
+
+// libros asociados
+const libros = mod.libros || [];
+---
+
+<Base title={`${modulo} · ${mod.title} · raíz_`} tag={modulo} view="modulo">
+  <section class="view lread enter">
+    <a class="backlink" href="/grafo">← skill tree</a>
+    <div class="crumb">{modulo} · {mod.phase}</div>
+    <h2>{mod.title}</h2>
+    <p class="cold">{mod.meta}</p>
+
+    {mod.nota && <div class="note">{mod.nota}</div>}
+    {mod.gap && <div class="note" style="border-color:var(--c4);"><b>Gap detectado:</b> {mod.gap}</div>}
+    {mod.lab && <div class="note"><b>Lab:</b> {mod.lab}</div>}
+
+    {deps.length > 0 && (
+      <>
+        <h3 style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-family:ui-monospace,Menlo,monospace;margin:30px 0 10px;">Depende de</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          {deps.map((d:any)=>(
+            <a class="tag" href={`/m/${d.id}`}>{d.id} · {d.title}</a>
+          ))}
+        </div>
+      </>
+    )}
+
+    <h3 style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-family:ui-monospace,Menlo,monospace;margin:30px 0 10px;">Introduce</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+      {mod.introduces.map((t:string)=>(
+        <span class="kbd">{t}</span>
+      ))}
+    </div>
+
+    {libros.length > 0 && (
+      <>
+        <h3 style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-family:ui-monospace,Menlo,monospace;margin:30px 0 10px;">Material</h3>
+        <div style="font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--muted);line-height:1.8;">
+          {libros.map((l:string)=>(<div>📚 {l}</div>))}
+        </div>
+      </>
+    )}
+
+    <hr class="rule" />
+
+    <h3 style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-family:ui-monospace,Menlo,monospace;margin:0 0 14px;">Lecciones ({leccionesAMostrar.length})</h3>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      {leccionesAMostrar.map((l:any)=>(
+        <a
+          href={l.disponible ? `/l/${l.id}` : '#'}
+          class={`btn ghost ${l.disponible ? '' : 'disabled'}`}
+          style={l.disponible ? {} : {opacity:.45, cursor:'not-allowed'}}
+        >
+          {l.id} · {l.titulo}
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<script>
+  document.querySelectorAll('a.btn.ghost.disabled').forEach(a=>{
+    a.addEventListener('click',e=>{
+      e.preventDefault();
+      navigator.vibrate?.([10,40,10]);
+    });
+  });
+</script>
