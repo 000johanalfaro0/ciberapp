@@ -60,6 +60,14 @@ const generadoPor = leccion?.data?.generado_por || 'demo';
 
       <hr class="rule" />
 
+      <aside class="progress-card" data-lesson-progress data-lesson-id={leccionId}>
+        <div>
+          <strong>Tu progreso en este dispositivo</strong>
+          <p data-progress-copy>Marca la lección cuando termines. No necesitas crear una cuenta.</p>
+        </div>
+        <button class="btn" type="button" data-progress-button>Marcar como completada</button>
+      </aside>
+
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
         <a class="btn ghost" href={`/m/${modulo}`}>← módulo</a>
         <span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--faint);">
@@ -70,7 +78,39 @@ const generadoPor = leccion?.data?.generado_por || 'demo';
   </section>
 </Base>
 
+<script>
+  const card = document.querySelector('[data-lesson-progress]');
+  if (card instanceof HTMLElement) {
+    const lessonId = card.dataset.lessonId;
+    const button = card.querySelector('[data-progress-button]');
+    const copy = card.querySelector('[data-progress-copy]');
+    const key = 'raiz.completedLessons';
+    const read = () => {
+      try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); }
+      catch { return new Set(); }
+    };
+    const render = () => {
+      const completed = read().has(lessonId);
+      card.dataset.completed = String(completed);
+      if (button) button.textContent = completed ? 'Completada ✓' : 'Marcar como completada';
+      if (copy) copy.textContent = completed ? 'Guardada localmente. Puedes desmarcarla si quieres repetirla.' : 'Marca la lección cuando termines. No necesitas crear una cuenta.';
+    };
+    button?.addEventListener('click', () => {
+      const completed = read();
+      if (completed.has(lessonId)) completed.delete(lessonId);
+      else completed.add(lessonId);
+      localStorage.setItem(key, JSON.stringify([...completed]));
+      render();
+    });
+    render();
+  }
+</script>
+
 <style>
+  .progress-card { display:flex; justify-content:space-between; align-items:center; gap:18px; margin:24px 0; padding:16px; border:1px solid var(--line); border-radius:10px; background:var(--paper); }
+  .progress-card p { margin:4px 0 0; color:var(--muted); font-size:13px; }
+  .progress-card[data-completed="true"] { border-color:var(--accent); background:var(--accent-soft); }
+  @media (max-width: 620px) { .progress-card { align-items:stretch; flex-direction:column; } }
   .leccion-cuerpo :global(h1) { display: none; }
   .leccion-cuerpo :global(h2) {
     font-size: 22px; font-weight: 680; letter-spacing: -.02em;

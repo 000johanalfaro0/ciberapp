@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import grafo from '../../meta/grafo.json';
+import { getCollection } from 'astro:content';
+const publishedLessons = (await getCollection('lecciones')).length;
 ---
 
 <Base view="landing">
@@ -17,12 +19,13 @@ import grafo from '../../meta/grafo.json';
       <p class="lede">
         No asumimos que sabés nada. Empezamos donde la electricidad se vuelve información —
         y no paramos hasta el exploit. <span class="kbd">21 módulos</span> ·
-        <span class="kbd">~222 lecciones</span> · <span class="kbd">grafo dirigido</span>.
+        <span class="kbd">{publishedLessons} lecciones publicadas</span> · <span class="kbd">grafo dirigido</span>.
       </p>
       <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
         <a class="btn" href="/grafo">Ver el skill tree completo</a>
         <a class="btn ghost" href="/m/M0">Empezar por M0 · El bit</a>
       </div>
+      <p style="margin-top:18px;font-size:13px;color:var(--muted);">El resto del recorrido está trazado en el skill tree y se publica por etapas.</p>
     </div>
   </section>
 </Base>
