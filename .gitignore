@@ -15,3 +15,4 @@ logs/
 # Book-derived content — copyright, never distributed
 raw-pdfs/
 libros-md/
+.vercel
