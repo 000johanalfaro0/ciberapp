@@ -1,5 +1,4 @@
 import { defineConfig } from 'astro/config';
-import node from '@astrojs/node';
 
 // raíz_ — config base
 // Multi-tenant SaaS con Supabase + Stripe.
@@ -7,7 +6,6 @@ import node from '@astrojs/node';
 
 export default defineConfig({
   site: 'https://raiz.app',
-  adapter: node({ mode: 'standalone' }),
   markdown: {
     shikiConfig: {
       theme: 'github-light',
