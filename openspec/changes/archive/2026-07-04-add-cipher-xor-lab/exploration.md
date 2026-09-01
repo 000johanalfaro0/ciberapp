@@ -100,7 +100,7 @@ interface Props {
 }
 
 const {
-  descripcion = "Probá cómo funciona el cifrado XOR. Cambiá el texto o la clave y observá el resultado a nivel de bits.",
+  descripcion = "Prueba cómo funciona el cifrado XOR. Cambia el texto o la clave y observa el resultado a nivel de bits.",
   textoPlano = "A",
   clave = "K"
 } = Astro.props;

@@ -1,6 +1,6 @@
 # Serious Cryptography, 2nd Edition (Aumasson, 2024) — TOC
 
-> **Estado**: ⚠️ Solo TOC — el PDF que tenés es la **1ra ed (2017, 314pp)**. La 2da ed (2024, 376pp) agrega: cripto post-cuántica actualizada, blockchain/criptomonedas, ed25519.
+> **Estado**: ⚠️ Solo TOC — el PDF disponible es la **1.ª ed. (2017, 314 pp.)**. La 2.ª ed. (2024, 376 pp.) agrega criptografía poscuántica actualizada, blockchain, criptomonedas y ed25519.
 > **Cubre**: M6 (Criptografía) — actualizado
 > **Fuente**: https://nostarch.com/serious-cryptography-2nd-edition (página oficial)
 

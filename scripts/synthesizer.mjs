@@ -117,7 +117,7 @@ Tu tarea: identificar los CAPÍTULOS REALES del libro (no sub-secciones, no auto
 Reglas:
 - Un capítulo real tiene título descriptivo de tema (ej: "Processor Architecture", "Introduction", "Binary Exploitation").
 - Ignorá: "About the Author", "Contents", "Index", "Foreword", "Copyright", nombres de autores, dedicatorias.
-- Si el libro usa "Chapter N" o numeración (1, 2, 3), usá ese número.
+- Si el libro usa "Chapter N" o numeración (1, 2, 3), usa ese número.
 - Si no, asigná números 1, 2, 3 en orden.
 
 OUTPUT (JSON válido, sin markdown alrededor):
@@ -194,7 +194,7 @@ function extraerContenidoCap(md, cap) {
 
 // === Síntesis de lección ===
 async function sintetizarLeccion(mod, cap, slug, contenido, depsDefinidos, numLeccion) {
-  const systemPrompt = `Sos un educador de ciberseguridad que escribe lecciones en español neutro (tuteo, no voseo) para la plataforma "raíz_".
+  const systemPrompt = `Eres un educador de ciberseguridad que escribe lecciones en español neutro (tuteo, no voseo) para la plataforma "raíz_".
 
 REGLAS DE ESTILO:
 - Empieza con frase CORTA y CONTUNDENTE (cold).
@@ -208,7 +208,7 @@ REGLA "NO ASUMIR":
 - Si un término aparece pero NO fue definido upstream, definilo en esta lección.`;
 
   const prompt = `# TAREA
-Escribí la Lección ${String(numLeccion).padStart(2,'0')} del módulo ${mod.id} (${mod.title}) para raíz_.
+Escribe la Lección ${String(numLeccion).padStart(2,'0')} del módulo ${mod.id} (${mod.title}) para raíz_.
 
 ## Contexto
 - Meta del módulo: ${mod.meta}
@@ -222,7 +222,7 @@ ${contenido}
 \`\`\`
 
 ## Tu trabajo
-Convertí ESTE capítulo en 1 lección coherente.
+Convierte ESTE capítulo en una lección coherente.
 
 La lección debe:
 1. Título H1 claro.

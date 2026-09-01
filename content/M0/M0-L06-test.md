@@ -33,4 +33,4 @@ Cuando la clave es más corta que el mensaje original (texto plano), la clave se
 
 Por lo tanto, la cadena cifrada resultante en hexadecimal es `03041a00`.
 
-En este laboratorio interactivo podés experimentar con los bits del mensaje y la clave para ver el cifrado XOR en tiempo real (Modo Sandbox) o intentar romper el mensaje cifrado (Desafío CTF).
+En este laboratorio interactivo puedes experimentar con los bits del mensaje y la clave para ver el cifrado XOR en tiempo real (modo sandbox) o intentar romper el mensaje cifrado (desafío CTF).

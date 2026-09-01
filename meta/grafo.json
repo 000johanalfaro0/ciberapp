@@ -52,7 +52,7 @@
       "libros": ["OSTEP", "CSAPP-3e:cap9"],
       "lecciones_estimadas": 10,
       "status": "material_listo",
-      "siembra": "acá se siembra el buffer overflow (M9/M13)"
+      "siembra": "aquí se introduce el buffer overflow (M9/M13)"
     },
     "M3": {
       "title": "Cómo se Construye (y se Rompe) un Programa",

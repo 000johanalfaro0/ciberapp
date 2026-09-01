@@ -53,7 +53,7 @@ const {
   <!-- CTF View -->
   <div class="ctf-view mode-view hide">
     <p class="lab-q">
-      Se ha interceptado un mensaje cifrado en hexadecimal. Conociendo la longitud de la clave, ingresá la clave correcta para descifrar el texto plano original.
+      Se ha interceptado un mensaje cifrado en hexadecimal. Conociendo la longitud de la clave, ingresa la clave correcta para descifrar el texto plano original.
     </p>
     
     <div class="ctf-card">
@@ -68,7 +68,7 @@ const {
     </div>
     
     <div class="input-group" style="margin-top:20px;">
-      <label class="input-label">Ingresá la Clave</label>
+      <label class="input-label">Ingresa la clave</label>
       <input type="text" class="ctf-key-input input-field mono" placeholder="???" maxlength="32" />
     </div>
     
@@ -432,7 +432,7 @@ const {
         if (plaintext.length === 0) {
           sandboxGrid.innerHTML = `
             <div style="text-align:center;color:var(--muted);padding:26px;font-size:14px;border:1px dashed var(--line-2);border-radius:12px;">
-              Ingresá texto plano para visualizar los bits
+              Ingresa texto plano para visualizar los bits
             </div>
           `;
           return;
@@ -572,7 +572,7 @@ const {
           decryptedText += String.fromCharCode(decCode);
         }
 
-        ctfDecryptedOut.textContent = decryptedText || '(ingresá clave para descifrar)';
+        ctfDecryptedOut.textContent = decryptedText || '(ingresa una clave para descifrar)';
 
         // Chequear victoria
         if (decryptedText === textoPlano && enteredKey.length > 0) {
