@@ -13,7 +13,6 @@ lab:
   texto_plano: "HACK"
   clave: "KEY"
   cifrado: "03041a00"
-generado_por: "manual"
 generado_en: "2026-07-04T22:32:00Z"
 status: "publicado"
 ---

@@ -12,7 +12,7 @@ interface Entrada {
   usado_en: string[];          // otros módulos que dependen de él
 }
 
-// por ahora solo el vocabulario, sin definiciones (las llena el synthesizer con DeepSeek)
+// por ahora solo el vocabulario, sin definiciones (las completa el pipeline de contenido)
 const vocabulario: Entrada[] = [];
 const introducePor: Record<string, string> = {};
 const usa: Record<string, string[]> = {};

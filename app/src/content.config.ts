@@ -39,7 +39,6 @@ const lecciones = defineCollection({
       anverso: z.string(),
       reverso: z.string(),
     })).default([]),
-    generado_por: z.string().default('deepseek-v4-flash'),
     generado_en: z.string(),
     status: z.enum(['borrador', 'revisado', 'publicado']).default('borrador'),
   }),

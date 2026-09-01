@@ -1,4 +1,4 @@
-// synthesizer.mjs v3 — Usa opencode CLI (zai-coding-plan/glm-5.2)
+// synthesizer.mjs v3 — sintetiza borradores a partir de las fuentes configuradas.
 // + Outline pass para identificar capítulos reales (no basura de docling).
 //
 // Estrategia:
@@ -9,7 +9,7 @@
 // Uso:
 //   node synthesizer.mjs --modulo M0
 //
-// Nota: alterna providers si hay varios configurados. Por ahora solo GLM-5.2.
+// El proveedor se configura desde el entorno para no fijar una marca o modelo.
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync, unlinkSync } from 'node:fs';
 import { execSync, spawnSync } from 'node:child_process';
@@ -20,8 +20,9 @@ const LIBROS_MD = join(ROOT, 'libros-md');
 const CONTENT_OUT = join(ROOT, 'content');
 const GRAFO = JSON.parse(readFileSync(join(ROOT, 'meta/grafo.json'), 'utf-8'));
 
-const MODEL = 'zai-coding-plan/glm-5.2';
-const MAX_CHARS_SYNTH = 25_000; // bajo para evitar timeouts de GLM-5.2
+const MODEL = process.env.CONTENT_MODEL;
+if (!MODEL) throw new Error('Define CONTENT_MODEL antes de ejecutar el sintetizador.');
+const MAX_CHARS_SYNTH = 25_000;
 
 // === Wrapper del CLI opencode ===
 // Sanitiza strings para eliminar chars de control (null bytes, etc.) que vienen del PDF.
@@ -314,7 +315,6 @@ depende_de: ${JSON.stringify(mod.depends_on || [])}
 introduce: []
 libros_fuente: ${JSON.stringify([slug])}
 capitulo_fuente: "${(cap.num + ' ' + cap.titulo).replace(/"/g, '\\"')}"
-generado_por: "glm-5.2@zai-coding-plan"
 generado_en: "${new Date().toISOString()}"
 status: "borrador"
 ---

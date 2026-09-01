@@ -29,7 +29,7 @@ ciberapp/
 │   └── schema.sql              # ⭐ multi-tenant con RLS, spaced repetition, Stripe
 ├── scripts/
 │   ├── batch-docling.sh        # batch PDF→markdown sobre 16 libros
-│   └── synthesizer.mjs         # ⭐ genera lecciones con DeepSeek V4 Flash
+│   └── synthesizer.mjs         # genera borradores desde las fuentes
 └── logs/
 ```
 
@@ -42,8 +42,7 @@ OWASP/MITRE/HackTricks ─────────── knowledge-  ─┤
                                    packs/       │
                                                  ▼
                                          synthesizer.mjs
-                                          (DeepSeek V4 Flash,
-                                           alterna Go/Zen)
+                                      (proveedor configurable)
                                                  │
                                                  ▼
                                           content/M0-L01.md
@@ -63,8 +62,7 @@ OWASP/MITRE/HackTricks ─────────── knowledge-  ─┤
 | Frontend | Astro + vanilla JS | Respeta 100% la estética brutalista; cero overhead |
 | Auth/DB | Supabase (Postgres + RLS) | Multi-tenant nativo, free tier, edge functions |
 | Pagos | Stripe | Estándar, webhooks → Supabase |
-| Pipeline contenido | docling + DeepSeek V4 Flash | docling convierte PDF; DeepSeek sintetiza lecciones |
-| Modelos LLM | `opencode-go/deepseek-v4-flash` + `opencode-zen/deepseek-v4-flash` | Gratis / barato, zero-retention en Go |
+| Pipeline de contenido | docling + sintetizador configurable | docling convierte las fuentes y el script prepara borradores revisables |
 
 ## Setup
 
@@ -80,8 +78,7 @@ cd /home/jojan/AppsWebs/ciberapp
 bash scripts/batch-docling.sh # ya corre en background con nohup
 
 # 3. Síntesis de lecciones (cuando docling terminó los PDFs del módulo)
-export OPENCODE_GO_API_KEY=...
-export OPENCODE_ZEN_API_KEY=...
+export CONTENT_MODEL=proveedor/modelo
 node scripts/synthesizer.mjs --modulo M0
 
 # 4. Base de datos
@@ -103,7 +100,7 @@ node scripts/synthesizer.mjs --modulo M0
 - ✅ Skeleton Astro armado, estética `raíz_` migrada
 - ✅ Grafo del currículo validado
 - ✅ Schema Supabase multi-tenant
-- ⏳ Pendiente: API keys de Go/Zen para correr synthesizer
+- ⏳ Pendiente: configurar el proveedor del sintetizador
 - ⏳ Pendiente: Stripe integration, deploy a Vercel/Netlify
 
 ## Convención de nombres

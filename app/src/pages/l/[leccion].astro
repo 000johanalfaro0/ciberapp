@@ -28,7 +28,6 @@ const titulo  = leccion?.data?.titulo || 'Lección';
 const crumb   = leccion?.data?.crumb || '';
 const modulo  = leccion?.data?.modulo || 'M0';
 const leccionId = leccion?.data?.id || leccion?.id;
-const generadoPor = leccion?.data?.generado_por || 'demo';
 ---
 
 <Base title={`${titulo} · raíz_`} tag={leccionId} view="leccion">
@@ -68,11 +67,8 @@ const generadoPor = leccion?.data?.generado_por || 'demo';
         <button class="btn" type="button" data-progress-button>Marcar como completada</button>
       </aside>
 
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+      <div style="display:flex;justify-content:flex-start;align-items:center;gap:10px;">
         <a class="btn ghost" href={`/m/${modulo}`}>← módulo</a>
-        <span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--faint);">
-          {generadoPor}
-        </span>
       </div>
     </div>
   </section>
